@@ -1,33 +1,29 @@
 import arcjet, { tokenBucket, detectBot, shield } from "@arcjet/node";
-import { ARCJET_KEY, NODE_ENV } from "./env.js";
+import { ARCJET_KEY } from "./env.js";
 
 export const aj = arcjet({
-    // Get your site key from https://app.arcjet.com and set it as an environment
-    // variable rather than hard coding.
     key: ARCJET_KEY,
     characteristics: ["ip.src"], // Track requests by IP
     rules: [
       // Shield protects your app from common attacks e.g. SQL injection
-      shield({ mode: NODE_ENV === "production" ? "LIVE" : "DRY_RUN" }),
+      shield({ mode: "LIVE" }),
       // Create a bot detection rule
+      // Set detectBot to "DRY_RUN" so that real users behind proxies / mobile IPs are not falsely blocked on sign in / sign up
       detectBot({
-        mode: NODE_ENV === "production" ? "LIVE" : "DRY_RUN", // Blocks requests. Use "DRY_RUN" to log only
-        // Block all bots except the following
+        mode: "DRY_RUN",
         allow: [
-          "CATEGORY:SEARCH_ENGINE", // Google, Bing, etc
-          // Uncomment to allow these other common bot categories
-          // See the full list at https://arcjet.com/bot-list
-          "CATEGORY:MONITOR", // Uptime monitoring services
-          //"CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
-          "JAVASCRIPT_NODE_FETCH", //For api client testing 
+          "CATEGORY:SEARCH_ENGINE",
+          "CATEGORY:MONITOR",
+          "CATEGORY:PREVIEW",
+          "JAVASCRIPT_NODE_FETCH",
         ],
       }),
-      // Create a token bucket rate limit. Other algorithms are supported.
+      // Token bucket rate limit to protect against brute-force attacks
       tokenBucket({
-        mode: NODE_ENV === "production" ? "LIVE" : "DRY_RUN",
-        refillRate: 5, // Refill 5 tokens per interval
-        interval: 10, // Refill every 10 seconds
-        capacity: 10, // Bucket capacity of 10 tokens
+        mode: "LIVE",
+        refillRate: 5,
+        interval: 10,
+        capacity: 10,
       }),
     ],
   });
