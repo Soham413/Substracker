@@ -19,6 +19,9 @@ app.use(cors())
 app.use(cookieParser()) //this takes access of cookie data(user data) coming from browser
 app.use(arcjetMiddleware);
 
+// Enable trust proxy for cloud hosts (Render, Railway, Vercel, Heroku, etc.) for hosted site login, signup
+app.set('trust proxy', 1);
+
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);

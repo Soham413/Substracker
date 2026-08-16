@@ -10,7 +10,7 @@ const connectToDatabase = async() => {
         await mongoose.connect(DB_URI);
         console.log(`connected to mongo db in ${NODE_ENV} mode`);
         
-    }
+    }   
     catch(error) {
         console.log('Error connecting to mongo db', error);
     }

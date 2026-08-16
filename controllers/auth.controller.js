@@ -67,7 +67,7 @@ export const signIn = async(req, res, next) => {
             data: { token, user: existingUser }
         })
     } catch (error) {
-        
+        next(error)
     }
 }
 
